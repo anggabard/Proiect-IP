@@ -18,6 +18,13 @@ void adauga_img_aici(SDL_Surface * img, int x, int y, SDL_Surface * dest)
 	SDL_BlitSurface(img, NULL, dest, &img->clip_rect);
 }
 
+bool este_deasupra(SDL_Rect zona, int x, int y)
+{
+	if (x > zona.x && x < zona.x + zona.w && y > zona.y && y < zona.y + zona.h)
+		return true;
+	return false;
+}
+
 class Sprite
 {
 private:
@@ -50,9 +57,9 @@ int main(int argc, char* args[])
 	fereastra = SDL_CreateWindow("Catan!",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		1280,
-		1024,
-		SDL_WINDOW_FULLSCREEN_DESKTOP);
+		640,
+		480,
+		0);
 
 	int latime_ecran;
 	int lungime_ecran;
@@ -68,6 +75,7 @@ int main(int argc, char* args[])
 
 	SDL_Surface *Joc_nou = SDL_LoadBMP("joc_nou.bmp");
 	adauga_img_aici(Joc_nou, latime_ecran / 2 - Joc_nou->clip_rect.w / 2, lungime_ecran / 2 - Joc_nou->clip_rect.h / 2 - 100, ecran);
+
 
 	SDL_Surface *iesire = SDL_LoadBMP("iesire.bmp");
 	adauga_img_aici(iesire, latime_ecran / 2 - iesire->clip_rect.w / 2, lungime_ecran / 2 - iesire->clip_rect.h / 2 + 100, ecran);
@@ -89,6 +97,22 @@ int main(int argc, char* args[])
 				merge = false;
 				break;
 			}
+			else if (event.type == SDL_MOUSEMOTION)
+			{
+				int x, y;
+				SDL_GetMouseState(&x, &y);
+				if (este_deasupra(Joc_nou->clip_rect, x, y))
+				{
+					Joc_nou = SDL_LoadBMP("joc_nou_selected");
+					SDL_UpdateWindowSurface(fereastra);
+				}
+				else
+				{
+					Joc_nou = SDL_LoadBMP("joc_nou");
+					SDL_UpdateWindowSurface(fereastra);
+				}
+			}
+
 			
 		}
 		
