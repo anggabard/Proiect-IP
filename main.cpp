@@ -1,6 +1,6 @@
-#include "SDL.h"
+#include "functi.h"
 #include <iostream>
-
+#include "SDL.h"
 #define fps 60
 
 using namespace std;
@@ -39,8 +39,8 @@ public:
 
 			coordonate = imagine->clip_rect;
 
-			coordonate.x = x - latime/2;
-			coordonate.y = y - inaltime/2;
+			coordonate.x = x ;
+			coordonate.y = y ;
 	}
 	void deseneaza(SDL_Surface *destinatie)
 	{
@@ -48,28 +48,24 @@ public:
 	}
 };
 
-struct hexagon
-{
-	int val;
-
-
-}hex[19];
 int main(int argc, char* args[])
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
-
+	cout << "ceapa";
 	SDL_Window *fereastra = NULL;
 	fereastra = SDL_CreateWindow("Catan!",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
 		1280,
 		1024,
-		SDL_WINDOW_FULLSCREEN);
+		0);
 
 	int latime_ecran;
 	int lungime_ecran;
 	SDL_GetWindowSize(fereastra, &latime_ecran, &lungime_ecran);
 	
+	
+
 	SDL_Surface *ecran = SDL_GetWindowSurface(fereastra);
 	Uint32 negru = SDL_MapRGB(ecran->format, 0,0,0);
 	Uint32 alb = SDL_MapRGB(ecran->format, 255, 255, 255);
@@ -81,8 +77,6 @@ int main(int argc, char* args[])
 	SDL_Surface *Joc_nou = SDL_LoadBMP("joc_nou.bmp");
 
 	SDL_Surface *iesire = SDL_LoadBMP("iesire.bmp");
-
-
 	
 	SDL_UpdateWindowSurface(fereastra);
 	
@@ -166,8 +160,22 @@ int main(int argc, char* args[])
 							SDL_Surface * fundal = SDL_LoadBMP("Fundal.bmp");
 							SDL_FreeSurface(ecran);
 							SDL_BlitSurface(fundal, NULL, ecran, &fundal->clip_rect);
+							
+							creare_harta(m, c);
+
+							Sprite b(negru,c[1].x, c[1].y, 30, 30);
+							b.deseneaza(ecran);
+
+							Sprite x(negru,c[2].x, c[2].y, 30, 30);
+							x.deseneaza(ecran);
+							Sprite cv(negru, c[3].x, c[3].y, 30, 30);
+							cv.deseneaza(ecran);
+							Sprite bv(negru, c[4].x, c[4].y, 30, 30);
+							bv.deseneaza(ecran);
+
 							SDL_UpdateWindowSurface(fereastra);
 
+							
 							joc_nou_apasat = true;
 							merge = false;
 						}
