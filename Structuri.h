@@ -1,25 +1,40 @@
+struct disponibilitate{
+	bool player1;
+	bool player2;
+};
+
+struct drum{
+	bool leg;
+	disponibilitate disp;
+	int x_centru;
+	int y_centru;
+};
 struct nod_colt{
 	int nume;
-	int asezare = 0;
-	bool disp;
+	int asezare; 
+	disponibilitate disp;
 	int coor_centru_x;
 	int coor_centru_y;
 	int x;
 	int y;
-	int w = x + 36;
-	int h = y + 36;
+	int w; 
+	int h; 
 }c[55];
 
 struct nod_centru{
 	int nume;
-	nod_colt legatura[7];
-	int x;
-	int y;
-	int arie_x = x - 50; int arie_y = y - 70; int arie_w = x + 50; int arie_h = y + 70;
-	int tip_resursa = 0;
+	nod_colt * legatura[7];
+	int x_centru;
+	int y_centru;
+	int arie_x; 
+	int arie_y;
+	int arie_w;
+	int arie_h;
+	int tip_resursa;
 	int nr;
 	bool hot;
 }m[20];
+drum mat[55][55];
 //tip_resursa:
 //0 = nika;
 //1 = lemn;
