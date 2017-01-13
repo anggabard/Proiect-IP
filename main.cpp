@@ -64,6 +64,9 @@ int main(int argc, char* args[])
 	TTF_Init();
 	SDL_Window *fereastra = NULL;
 	SDL_Surface * casute = NULL;
+	SDL_Surface * copie_casute = NULL;
+	copie_casute = SDL_LoadBMP("tabla_puncte.bmp");
+	casute = SDL_LoadBMP("tabla_fara_puncte.bmp");
 	fereastra = SDL_CreateWindow("Catan!",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
@@ -270,8 +273,10 @@ int main(int argc, char* args[])
 																						 if (este_deasupra(coordonate_casuta, x, y))
 																						 {
 																							
+																							
 																							 Sprite a(negru, c[i].coor_centru_x, c[i].coor_centru_y, 40, 40);
 																							 a.deseneaza(casute);
+																							 SDL_BlitSurface(casute, NULL, ecran, &casute->clip_rect);
 																							 SDL_UpdateWindowSurface(fereastra);
 																							 p1.pct++;
 																							 p1.asezari[nr_asezari_p1] = &c[i];
@@ -330,6 +335,39 @@ int main(int argc, char* args[])
 																							   }
 																							   }
 																							   break;
+																		   }
+																		   case SDL_MOUSEBUTTONDOWN:
+																		   {
+																						int x = NULL, y = NULL;
+																						SDL_GetMouseState(&x, &y);
+																						for (int i = 1; i <= 54; i++)
+																									{
+
+																							SDL_Rect coordonate_casuta;
+																							coordonate_casuta.x = c[i].coor_centru_x - 20;
+																							coordonate_casuta.y = c[i].coor_centru_y - 20;
+																							coordonate_casuta.h = 40;
+																							coordonate_casuta.w = 40;
+																							if (este_deasupra(coordonate_casuta, x, y))
+																								{
+																									Sprite a(alb, c[i].coor_centru_x, c[i].coor_centru_y, 40, 40);
+																									a.deseneaza(casute);
+																									SDL_BlitSurface(casute, NULL, ecran, &casute->clip_rect);
+																									SDL_UpdateWindowSurface(fereastra);
+																									p2.pct++;
+																											   p2.asezari[nr_asezari_p2] = &c[i];
+																											   nr_asezari_p2++;
+																											   for (int j = 1; j <= 19; j++)
+																											   for (int k = 1; k <= 6; k++)
+																											   if (c[i].nume == m[j].legatura[k]->nume)
+																												   p2.resurse[m[j].tip_resursa]++;
+																											   c[i].asezare = 1;
+																											   c[i].disp.player1 = false;
+																											   c[i].disp.player2 = false;
+																											   break;
+																										   }
+																									   }
+																									   break;
 																		   }
 
 																		   }

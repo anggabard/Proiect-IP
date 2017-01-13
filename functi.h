@@ -590,12 +590,11 @@ void adauga_pct(player &p, int index_player, SDL_Color culoare, SDL_Surface * de
 void afisare_resurse(player &p, int index_player, SDL_Color culoare, SDL_Surface * dest, SDL_Surface * casute)
 {
 	SDL_Surface * tabla;
-	tabla = SDL_LoadBMP("Fundal.bmp");
+	tabla = SDL_LoadBMP("tabla_puncte.bmp");
 	SDL_Rect coord_tabla;
 	coord_tabla = tabla->clip_rect;
 	coord_tabla.x = 0;
 	coord_tabla.y = 0;
-	SDL_BlitSurface(casute, NULL, tabla, &casute->clip_rect);
 	TTF_Font* Sans = TTF_OpenFont("LSANS.TTF", 24);
 	if (index_player == 1)
 	{
