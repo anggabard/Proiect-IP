@@ -1,3 +1,5 @@
+#include <string>
+using std::string;
 struct disponibilitate{
 	bool player1;
 	bool player2;
@@ -42,3 +44,17 @@ drum mat[55][55];
 //3 = argila;
 //4 = chiatra;
 //5 = mel;
+
+struct player{
+	int resurse[6];
+	string string_resurse[6];
+	bool tura;
+	int pct;
+	nod_colt * asezari[10];
+	drum * drumuri[20];
+};
+player p1;
+player p2;
+char zero = 48;
+char sapte = 55;
+ 

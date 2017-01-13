@@ -1,4 +1,4 @@
-#include "Structuri.h"
+using std::to_string;
 void creare_harta(nod_centru m[], nod_colt c[])
 {
 	
@@ -540,3 +540,137 @@ void creare_harta(nod_centru m[], nod_colt c[])
 	
 }
 
+void creare_player(player &p1, player &p2)
+{
+	for (int i = 0; i <= 5; i++)
+	{
+		p1.resurse[i] =  0;
+		p1.string_resurse[i] = to_string(p1.resurse[i]);
+		p2.resurse[i] =  0;
+		p2.string_resurse[i] = to_string(p2.resurse[i]);
+	}
+	for (int i = 0; i <= 9; i++)
+	{
+		p1.asezari[i] = nullptr;
+		p2.asezari[i] = nullptr;
+	}
+	for (int i = 0; i <= 19; i++)
+	{
+		p1.drumuri[i] = nullptr;
+		p2.drumuri[i] = nullptr;
+	}
+	p1.pct = 0;
+	p2.pct = 0;
+	p1.tura = true;
+	p2.tura = false;
+
+}
+
+void adauga_pct(player &p, int index_player, SDL_Color culoare, SDL_Surface * dest)
+{
+	TTF_Font* Sans = TTF_OpenFont("LSANS.TTF", 24);
+	string puncte = to_string(p.pct);
+	SDL_Surface* txt = TTF_RenderText_Solid(Sans, puncte.c_str(), culoare);
+	SDL_Rect poz;
+	if (index_player == 1)
+	{
+		poz.x = 675;
+		poz.y = 635;
+	}
+	else
+	{
+		poz.x = 675;
+		poz.y = 105;
+	}
+	poz.h = 50;
+	poz.w = 50;
+	SDL_BlitSurface(txt, NULL, dest, &poz);
+	SDL_FreeSurface(txt);
+}
+void afisare_resurse(player &p, int index_player, SDL_Color culoare, SDL_Surface * dest, SDL_Surface * casute)
+{
+	SDL_Surface * tabla;
+	tabla = SDL_LoadBMP("Fundal.bmp");
+	SDL_Rect coord_tabla;
+	coord_tabla = tabla->clip_rect;
+	coord_tabla.x = 0;
+	coord_tabla.y = 0;
+	SDL_BlitSurface(casute, NULL, tabla, &casute->clip_rect);
+	TTF_Font* Sans = TTF_OpenFont("LSANS.TTF", 24);
+	if (index_player == 1)
+	{
+		for (int i = 1; i <= 5; i++)
+		{
+			p1.string_resurse[i] = to_string(p1.resurse[i]);
+			SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, p1.string_resurse[i].c_str(), culoare);
+			SDL_Rect poz;
+			if (i == 1)
+			{
+				poz.x = 680;
+				poz.y = 538;
+			}
+			else if (i == 2)
+			{
+				poz.x = 780;
+				poz.y = 538;
+			}
+			else if (i == 3)
+			{
+				poz.x = 680;
+				poz.y = 570;
+			}
+			else if (i == 4)
+			{
+				poz.x = 780;
+				poz.y = 570;
+			}
+			else if (i == 5)
+			{
+				poz.x = 680;
+				poz.y = 605;
+			}
+			SDL_BlitSurface(surfaceMessage, NULL, tabla, &poz);
+			SDL_FreeSurface(surfaceMessage);
+		}
+		adauga_pct(p, 1, culoare, tabla);
+	}
+	else
+	{
+		for (int i = 1; i <= 5; i++)
+		{
+			p2.string_resurse[i] = to_string(p2.resurse[i]);
+			SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, p2.string_resurse[i].c_str(), culoare);
+			SDL_Rect poz;
+			if (i == 1)
+			{
+				poz.x = 680;
+				poz.y = 8;
+			}
+			else if (i == 2)
+			{
+				poz.x = 780;
+				poz.y = 8;
+			}
+			else if (i == 3)
+			{
+				poz.x = 680;
+				poz.y = 40;
+			}
+			else if (i == 4)
+			{
+				poz.x = 780;
+				poz.y = 40;
+			}
+			else if (i == 5)
+			{
+				poz.x = 680;
+				poz.y = 75;
+			}
+			SDL_BlitSurface(surfaceMessage, NULL, tabla, &poz);
+			SDL_FreeSurface(surfaceMessage);
+		}
+		adauga_pct(p, 2, culoare, tabla);
+	}
+	SDL_BlitSurface(tabla, NULL, dest, &coord_tabla);
+	SDL_FreeSurface(tabla);
+}

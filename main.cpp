@@ -1,6 +1,10 @@
-#include "functi.h"
 #include <iostream>
 #include "SDL.h"
+#include "SDL_ttf.h"
+#include <string>
+#include "Structuri.h"
+#include "functi.h"
+
 #define fps 60
 
 using namespace std;
@@ -30,6 +34,8 @@ class Sprite
 private:
 	SDL_Surface * imagine;
 	SDL_Rect coordonate;
+	int origine_x;
+	int origine_y;
 public:
 	Sprite(Uint32 culoare, int x, int y, int latime, int inaltime)
 	{
@@ -37,10 +43,14 @@ public:
 
 			SDL_FillRect(imagine, NULL, culoare);
 
-			coordonate = imagine->clip_rect;
+			coordonate = imagine -> clip_rect;
 
-			coordonate.x = x ;
-			coordonate.y = y ;
+			origine_x = coordonate.w/2;
+			origine_y = coordonate.h/2;
+
+
+			coordonate.x = x - origine_x;
+			coordonate.y = y - origine_y;
 	}
 	void deseneaza(SDL_Surface *destinatie)
 	{
@@ -51,24 +61,27 @@ public:
 int main(int argc, char* args[])
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	cout << "ceapa";
+	TTF_Init();
 	SDL_Window *fereastra = NULL;
+	SDL_Surface * casute = NULL;
 	fereastra = SDL_CreateWindow("Catan!",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		1280,
-		1024,
+		832,
+		669,
 		0);
 
 	int latime_ecran;
 	int lungime_ecran;
 	SDL_GetWindowSize(fereastra, &latime_ecran, &lungime_ecran);
 	
-	
+	SDL_Color verde_font = { 0, 255, 0 };
+	SDL_Color negru_font = { 0, 0, 0 };
 
 	SDL_Surface *ecran = SDL_GetWindowSurface(fereastra);
 	Uint32 negru = SDL_MapRGB(ecran->format, 0,0,0);
 	Uint32 alb = SDL_MapRGB(ecran->format, 255, 255, 255);
+
 	
 	SDL_Surface *BG = SDL_LoadBMP("BG.bmp");
 	SDL_Rect coordonateBG = BG->clip_rect;
@@ -159,19 +172,11 @@ int main(int argc, char* args[])
 						{	
 							SDL_Surface * fundal = SDL_LoadBMP("Fundal.bmp");
 							SDL_FreeSurface(ecran);
+							fundal->clip_rect.x = latime_ecran /2 - fundal-> w/2;
+							fundal->clip_rect.y = lungime_ecran /2 - fundal-> h/2;
 							SDL_BlitSurface(fundal, NULL, ecran, &fundal->clip_rect);
 							
 							creare_harta(m, c);
-
-							Sprite b(negru,c[1].x, c[1].y, 30, 30);
-							b.deseneaza(ecran);
-
-							Sprite x(negru,c[2].x, c[2].y, 30, 30);
-							x.deseneaza(ecran);
-							Sprite cv(negru, c[3].x, c[3].y, 30, 30);
-							cv.deseneaza(ecran);
-							Sprite bv(negru, c[4].x, c[4].y, 30, 30);
-							bv.deseneaza(ecran);
 
 							SDL_UpdateWindowSurface(fereastra);
 
@@ -190,37 +195,161 @@ int main(int argc, char* args[])
 		SDL_UpdateWindowSurface(fereastra);
 		frana_frame(moment_zero);
 	}
-	
+
 	if (joc_nou_apasat)
 	{
+		int nr_asezari_p1 = 0;
+		int nr_asezari_p2 = 0;
+		
 		bool ma_joc = true;
+		creare_player(p1, p2);
 		SDL_Event event_joc;
 			while (ma_joc)
 				{
 				while (SDL_PollEvent(&event_joc))
 						{
-								
-							switch (event_joc.type)
-									{
-										case SDL_KEYDOWN:
+						switch (event_joc.type)
+						{
+								case SDL_KEYDOWN:
 										{
 											switch (event_joc.key.keysym.sym)
 											{
 												case SDLK_ESCAPE:
+													{
+															ma_joc = false;
+															SDL_DestroyWindow(fereastra);
+															SDL_Quit();
+															break;
+													}
+												case SDLK_s:
 												{
-													ma_joc = false;
-													SDL_DestroyWindow(fereastra);
-													SDL_Quit();
-													break;
-												}
-												
 
-												default:
-												break;
+															   SDL_Event actiune_player;
+															   while(p1.pct < 7 && p2.pct < 7 && ma_joc)
+															   {
+																   while (p1.tura)
+																   {
+																	   while (SDL_PollEvent(&actiune_player))
+																	   {
+																		   switch (actiune_player.type)
+																		   {
+																		   case SDL_KEYDOWN:
+																		   {
+																							   switch (actiune_player.key.keysym.sym)
+																							   {
+																							   case SDLK_SPACE:
+																							   {																															 p1.tura = false;							
+																											p2.tura = true;
+																								break;
+																							   }
+																							   case SDLK_ESCAPE:
+																							   {
+																												   ma_joc = false;
+																												   p2.tura = false;
+																												   p1.tura = false;
+																												   SDL_DestroyWindow(fereastra);
+																												   SDL_Quit();
+																												   break;
+																							   }
+		
+																							   }
+																							   break;
+																		   }
+																		   case SDL_MOUSEBUTTONDOWN:
+																		   {
+																					 int x = NULL, y = NULL;
+																					 SDL_GetMouseState(&x, &y);
+																					 for (int i = 1; i <= 54; i++)
+																					 {
+																						
+																						 SDL_Rect coordonate_casuta;
+																						 coordonate_casuta.x = c[i].coor_centru_x - 20;
+																						 coordonate_casuta.y = c[i].coor_centru_y - 20;
+																						 coordonate_casuta.h = 40;
+																						 coordonate_casuta.w = 40;
+																						 if (este_deasupra(coordonate_casuta, x, y))
+																						 {
+																							
+																							 Sprite a(negru, c[i].coor_centru_x, c[i].coor_centru_y, 40, 40);
+																							 a.deseneaza(casute);
+																							 SDL_UpdateWindowSurface(fereastra);
+																							 p1.pct++;
+																							 p1.asezari[nr_asezari_p1] = &c[i];
+																							 nr_asezari_p1++;
+																							 for (int j = 1; j <= 19; j++)
+																							 for (int k = 1; k <= 6; k++)
+																							 if (c[i].nume == m[j].legatura[k]->nume)
+																									p1.resurse[m[j].tip_resursa]++;
+																							 c[i].asezare = 1;
+																							 c[i].disp.player1 = false;
+																							 c[i].disp.player2 = false;
+																							 break;
+																						 }
+																					 }
+																								   break;
+																		   }
+																		   default:
+																			   break;
+
+																		   }
+																	   }
+																	   
+																	   if (ma_joc)
+																	   {	
+																		   afisare_resurse(p1, 1, negru_font, ecran, casute);
+																		   Sprite b(negru, 0, 0, 50, 50);
+																		   b.deseneaza(ecran);
+																		   SDL_UpdateWindowSurface(fereastra);
+																	   }
+																   }
+
+																   while (p2.tura)
+																   {
+																	   while (SDL_PollEvent(&actiune_player))
+																	   {
+																		   switch (actiune_player.type)
+																		   {
+																		   case SDL_KEYDOWN:
+																		   {
+																							   switch (actiune_player.key.keysym.sym)
+																							   {
+																							   case SDLK_SPACE:
+																							   {
+																												  p2.tura = false;
+																												  p1.tura = true;
+																												  break;
+																							   }
+																							   case SDLK_ESCAPE:
+																							   {
+																												   ma_joc = false;
+																												   p2.tura = false;
+																												   p1.tura = false;
+																												   SDL_DestroyWindow(fereastra);
+																												   SDL_Quit();
+																												   break;
+																							   }
+																							   }
+																							   break;
+																		   }
+
+																		   }
+																	   }
+																	   if (ma_joc)
+																	   {
+																		  
+																		   afisare_resurse(p2, 2, negru_font, ecran, casute);
+																		   Sprite c(alb, 0, 0, 50, 50);
+																		   c.deseneaza(ecran);
+																		   SDL_UpdateWindowSurface(fereastra);
+																	   }
+																   }
+															   }
+															   break;
+												}
 											}
 										}
-
-			 						}
+						}
+					
 						}
 				}
 	}
